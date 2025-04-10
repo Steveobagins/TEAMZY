@@ -16,26 +16,30 @@ if (!JWT_SECRET || JWT_SECRET === 'replace_with_a_very_strong_random_secret_key_
 
 /**
  * Generates a JWT authentication token.
- * @param {object} payload - Data to include in the token. Must include userId and role.
+ * @param {object} payload - Data to include in the token. Must include userId and primary_role. // *** DOC Updated ***
  * @param {string} payload.userId - The user's unique identifier.
- * @param {string} payload.role - The user's primary role.
+ * @param {string} payload.primary_role - The user's primary role. // *** DOC Updated ***
  * @param {string} [payload.clubId] - The user's associated club ID (optional).
  * @returns {string} The generated JWT token.
  * @throws {Error} If payload is missing required fields.
  */
 export function generateAuthToken(payload) {
     // Ensure payload contains essential identifiers
-    if (!payload || !payload.userId || !payload.role) {
-        // Throw an error that can be caught by the calling function
-        throw new Error("Payload must include userId and role to generate auth token.");
+    // *** FIXED: Check for primary_role instead of role ***
+    if (!payload || !payload.userId || !payload.primary_role) {
+        log.error('generateAuthToken error: Payload missing required fields (userId, primary_role). Payload received:', payload);
+        // *** FIXED: Update error message ***
+        throw new Error("Payload must include userId and primary_role to generate auth token.");
     }
     // Construct claims carefully - avoid sensitive data
     const claims = {
         userId: payload.userId,
-        role: payload.role,
+        // *** FIXED: Use primary_role key in claims ***
+        primary_role: payload.primary_role,
         // Conditionally include clubId only if it exists in the payload
         ...(payload.clubId && { clubId: payload.clubId }),
-        // Add other non-sensitive claims if necessary (e.g., session ID if used)
+        // Add other non-sensitive claims if necessary (e.g., session ID if used, email?)
+         ...(payload.email && { email: payload.email }), // Optionally include email if needed by middleware/client decode
     };
 
     try {
@@ -60,7 +64,8 @@ export function verifyAuthToken(token) {
     try {
         // Returns the decoded payload if valid, otherwise throws error
         const decoded = jwt.verify(token, JWT_SECRET);
-        log.debug("JWT verified successfully for userId:", decoded.userId);
+        // *** Log the decoded payload to verify it contains primary_role ***
+        log.debug("JWT verified successfully. Payload:", decoded);
         return decoded;
     } catch (error) {
         // Log different JWT errors for debugging
@@ -92,5 +97,3 @@ export function generateSecureToken(length = 48) {
         throw new Error("Failed to generate secure token.");
     }
 }
-
-// No module.exports needed, use individual exports
