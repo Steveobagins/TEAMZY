@@ -1,0 +1,17 @@
+{
+  "name": "teamzy-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Teamzy SaaS Platform Monorepo",
+  "scripts": {
+    "dev:api": "pnpm --filter teamzy-api dev",
+    "dev:club": "pnpm --filter club-admin-ui start",
+    "dev:platform": "pnpm --filter platform-admin-ui start",
+    "dev:app": "pnpm --filter app-ui start",
+    "install:all": "pnpm install"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.1.3"
+  }
+}

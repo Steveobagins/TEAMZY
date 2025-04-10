@@ -1,0 +1,38 @@
+# Canvas: packages/api/Dockerfile
+# Stage 1: Build Dependencies
+FROM node:18-alpine AS builder
+WORKDIR /usr/src/app
+# Copy only package files first to leverage Docker cache
+COPY package.json package-lock.json* ./
+# Install ALL dependencies, including devDependencies, needed for potential build steps
+# If you have a build step (e.g., TypeScript), run it here.
+# RUN npm ci --include=dev
+# If no build step is needed, install only production dependencies
+RUN npm ci --only=production --ignore-scripts
+
+# Stage 2: Production Image
+FROM node:18-alpine
+WORKDIR /usr/src/app
+
+# Copy installed production dependencies from the builder stage
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+# Copy application code
+COPY . .
+
+# Set NODE_ENV to production (good practice)
+ENV NODE_ENV=production
+
+# Expose the port the app runs on (read from env or default)
+# Note: Dockerfile EXPOSE doesn't publish the port, 'docker run -p' does.
+EXPOSE ${PORT:-3001}
+
+# Healthcheck (Optional but Recommended)
+# Checks if the server is responding on the health endpoint
+# Adjust interval/timeout/retries as needed
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -q --spider http://localhost:${PORT:-3001}/api/health || exit 1
+
+# Define the command to run the app using Node.js
+# Using 'node' directly is common for simple apps.
+# Consider 'dumb-init' or 'tini' for better signal handling if needed.
+CMD [ "node", "src/server.js" ]

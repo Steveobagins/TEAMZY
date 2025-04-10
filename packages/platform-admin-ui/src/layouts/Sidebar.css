@@ -1,0 +1,50 @@
+/* Create this file at: packages/club-admin-ui/src/layouts/Sidebar.css */
+
+.sidebar {
+    width: 240px; /* Adjust width as needed */
+    background-color: #f8fafc; /* Example: Very light gray */
+    border-right: 1px solid #e5e7eb;
+    padding: 1.5rem 0; /* Padding top/bottom, no side padding */
+    height: calc(100vh - 65px); /* Full height minus header height - Adjust header height (e.g., 65px) */
+    position: sticky; /* Make sidebar sticky */
+    top: 65px; /* Position below the header - Adjust header height */
+    overflow-y: auto; /* Allow scrolling if content overflows */
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav li {
+    margin: 0;
+}
+
+.sidebar-nav a {
+    display: block;
+    padding: 0.75rem 1.5rem; /* Padding for links */
+    color: #4b5563; /* Example: Gray text */
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border-left: 3px solid transparent; /* For active indicator */
+}
+
+.sidebar-nav a:hover {
+    background-color: #e5e7eb; /* Light background on hover */
+    color: #1f2937; /* Darker text on hover */
+}
+
+.sidebar-nav a.active-link {
+    background-color: #e0e7ff; /* Example: Light indigo background for active */
+    color: #3730a3; /* Example: Indigo text for active */
+    font-weight: 500; /* Slightly bolder for active link */
+    border-left-color: #4f46e5; /* Example: Indigo border for active */
+}
+
+.nav-separator hr {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 1rem 1.5rem; /* Margin matching link horizontal padding */
+}
